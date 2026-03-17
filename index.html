@@ -3,41 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sahayak AI</title>
+<title>Arivu</title>
 
 <style>
 body {
-  font-family: system-ui;
-  background: linear-gradient(to bottom, #0f172a, #020617);
-  color: #e2e8f0;
+  font-family: 'Segoe UI', system-ui;
+  background: #f8fafc;
+  color: #1e293b;
   margin: 0;
-  padding: 20px;
 }
 
 .container {
   max-width: 800px;
   margin: auto;
+  padding: 20px;
 }
 
 h1 {
   text-align: center;
-  color: #38bdf8;
+  color: #2563eb;
+  margin-bottom: 5px;
 }
 
+.tagline {
+  text-align: center;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+/* Card style */
 .card {
-  background: #0f172a;
-  border: 1px solid #1e293b;
-  padding: 20px;
+  background: white;
   border-radius: 12px;
-  margin-top: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
+/* Upload */
 .upload-box {
-  border: 2px dashed #38bdf8;
+  border: 2px dashed #93c5fd;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
   cursor: pointer;
+  color: #2563eb;
+  background: #eff6ff;
 }
 
 .preview {
@@ -47,41 +57,56 @@ h1 {
   margin-top: 10px;
 }
 
+.preview div {
+  position: relative;
+}
+
 .preview img {
   width: 80px;
   height: 80px;
   border-radius: 8px;
+  object-fit: cover;
 }
 
 .remove {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background: red;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: white;
   border-radius: 50%;
   padding: 2px 6px;
   cursor: pointer;
+  font-size: 12px;
 }
 
+/* Input */
 textarea {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 15px;
   padding: 10px;
   border-radius: 8px;
+  border: 1px solid #cbd5f5;
 }
 
+/* Button */
 button {
   margin-top: 15px;
-  padding: 12px;
   width: 100%;
+  padding: 12px;
   border: none;
   border-radius: 8px;
-  background: #38bdf8;
-  color: black;
-  font-weight: bold;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
   cursor: pointer;
 }
 
+button:hover {
+  background: #1d4ed8;
+}
+
+/* Tabs */
 .tabs {
   display: flex;
   gap: 10px;
@@ -93,45 +118,47 @@ button {
   text-align: center;
   padding: 10px;
   border-radius: 8px;
-  background: #1e293b;
+  background: #e2e8f0;
   cursor: pointer;
 }
 
 .active {
-  background: #38bdf8;
-  color: black;
+  background: #2563eb;
+  color: white;
 }
 
+/* Output */
 .output {
-  margin-top: 10px;
-  background: #020617;
+  margin-top: 15px;
+  background: white;
   padding: 15px;
   border-radius: 10px;
   min-height: 120px;
-  white-space: pre-wrap;
+  line-height: 1.6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-/* Loader animation */
+/* Loader */
 .loader {
   display: flex;
-  gap: 6px;
   justify-content: center;
+  gap: 6px;
   margin-top: 20px;
 }
 
 .loader div {
-  width: 10px;
-  height: 10px;
-  background: #38bdf8;
+  width: 8px;
+  height: 8px;
+  background: #2563eb;
   border-radius: 50%;
-  animation: bounce 0.6s infinite alternate;
+  animation: bounce 0.5s infinite alternate;
 }
 
 .loader div:nth-child(2) { animation-delay: 0.2s; }
 .loader div:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes bounce {
-  to { transform: translateY(-8px); }
+  to { transform: translateY(-6px); }
 }
 </style>
 </head>
@@ -140,39 +167,47 @@ button {
 
 <div class="container">
 
-<h1>📘 Sahayak AI</h1>
+<h1>📘 Arivu</h1>
+<p class="tagline">Understand any lesson, instantly</p>
 
 <div class="card">
-  <div class="upload-box" onclick="fileInput.click()">
-    Upload textbook images
-  </div>
 
-  <input type="file" id="fileInput" hidden multiple accept="image/*">
+<div class="upload-box" onclick="fileInput.click()">
+  Upload textbook images
+</div>
 
-  <div class="preview" id="preview"></div>
+<input type="file" id="fileInput" hidden multiple accept="image/*">
 
-  <textarea id="doubt" placeholder="Ask your doubt..."></textarea>
+<div class="preview" id="preview"></div>
 
-  <label>
-    <input type="radio" name="lang" value="kannada" checked> Kannada
-  </label>
-  <label>
-    <input type="radio" name="lang" value="english"> English
-  </label>
+<p style="color:#64748b; font-size:13px;">
+Upload textbook pages or notes for best results
+</p>
 
-  <button onclick="simplify()">✨ Simplify</button>
+<textarea id="doubt" placeholder="Ask your doubt (optional)..."></textarea>
+
+<label>
+  <input type="radio" name="lang" value="kannada" checked> Kannada
+</label>
+<label>
+  <input type="radio" name="lang" value="english"> English
+</label>
+
+<button onclick="simplify()">✨ Simplify</button>
+
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('summarize')">Summary</div>
-  <div class="tab" onclick="showTab('explain')">Explain</div>
-  <div class="tab" onclick="showTab('keypoints')">Key Points</div>
+  <div class="tab active" onclick="showTab('summarize')">📖 Summary</div>
+  <div class="tab" onclick="showTab('explain')">🧠 Explanation</div>
+  <div class="tab" onclick="showTab('keypoints')">📌 Key Points</div>
 </div>
 
-<div class="output" id="output"></div>
+<div class="output" id="output">Upload content to start learning.</div>
 
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
