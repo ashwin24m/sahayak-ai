@@ -1,4 +1,7 @@
+
+
 function sendTask(taskType) {
+     console.log("BUTTON CLICKED:", taskType);
   const text = document.getElementById("textInput").value;
   const fileInput = document.getElementById("fileInput");
   const output = document.getElementById("output");
