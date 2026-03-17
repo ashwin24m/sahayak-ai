@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Arivu</title>
 
+<link rel="manifest" href="manifest.json">
+
 <style>
 body {
   font-family: 'Segoe UI', system-ui;
@@ -22,7 +24,6 @@ body {
 h1 {
   text-align: center;
   color: #2563eb;
-  margin-bottom: 5px;
 }
 
 .tagline {
@@ -31,7 +32,6 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Card style */
 .card {
   background: white;
   border-radius: 12px;
@@ -39,15 +39,14 @@ h1 {
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* Upload */
 .upload-box {
   border: 2px dashed #93c5fd;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
   cursor: pointer;
-  color: #2563eb;
   background: #eff6ff;
+  color: #2563eb;
 }
 
 .preview {
@@ -72,15 +71,13 @@ h1 {
   position: absolute;
   top: -6px;
   right: -6px;
-  background: #ef4444;
+  background: red;
   color: white;
   border-radius: 50%;
   padding: 2px 6px;
   cursor: pointer;
-  font-size: 12px;
 }
 
-/* Input */
 textarea {
   width: 100%;
   margin-top: 15px;
@@ -89,7 +86,6 @@ textarea {
   border: 1px solid #cbd5f5;
 }
 
-/* Button */
 button {
   margin-top: 15px;
   width: 100%;
@@ -98,15 +94,10 @@ button {
   border-radius: 8px;
   background: #2563eb;
   color: white;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
 }
 
-button:hover {
-  background: #1d4ed8;
-}
-
-/* Tabs */
 .tabs {
   display: flex;
   gap: 10px;
@@ -127,7 +118,6 @@ button:hover {
   color: white;
 }
 
-/* Output */
 .output {
   margin-top: 15px;
   background: white;
@@ -135,7 +125,6 @@ button:hover {
   border-radius: 10px;
   min-height: 120px;
   line-height: 1.6;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 /* Loader */
@@ -143,7 +132,6 @@ button:hover {
   display: flex;
   justify-content: center;
   gap: 6px;
-  margin-top: 20px;
 }
 
 .loader div {
@@ -154,8 +142,8 @@ button:hover {
   animation: bounce 0.5s infinite alternate;
 }
 
-.loader div:nth-child(2) { animation-delay: 0.2s; }
-.loader div:nth-child(3) { animation-delay: 0.4s; }
+.loader div:nth-child(2){animation-delay:0.2s}
+.loader div:nth-child(3){animation-delay:0.4s}
 
 @keyframes bounce {
   to { transform: translateY(-6px); }
@@ -180,11 +168,11 @@ button:hover {
 
 <div class="preview" id="preview"></div>
 
-<p style="color:#64748b; font-size:13px;">
-Upload textbook pages or notes for best results
+<p style="font-size:13px;color:#64748b;">
+Upload textbook pages or notes
 </p>
 
-<textarea id="doubt" placeholder="Ask your doubt (optional)..."></textarea>
+<textarea id="doubt" placeholder="Ask your doubt..."></textarea>
 
 <label>
   <input type="radio" name="lang" value="kannada" checked> Kannada
@@ -203,11 +191,10 @@ Upload textbook pages or notes for best results
   <div class="tab" onclick="showTab('keypoints')">📌 Key Points</div>
 </div>
 
-<div class="output" id="output">Upload content to start learning.</div>
+<div class="output" id="output">Start by uploading a lesson.</div>
 
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>

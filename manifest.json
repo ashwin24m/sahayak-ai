@@ -1,0 +1,8 @@
+{
+  "name": "Arivu",
+  "short_name": "Arivu",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb"
+}

@@ -1,81 +1,66 @@
-export async function handler(event) {
-  try {
-    const body = JSON.parse(event.body);
-    const { task, text, images, lang } = body;
+export async function handler(event){
+  try{
+    const {task,text,images,lang}=JSON.parse(event.body);
 
-    let instruction = "";
+    let instruction="";
+    if(task==="summarize") instruction="Give a short summary.";
+    if(task==="explain") instruction="Explain simply for students.";
+    if(task==="keypoints") instruction="Give bullet points.";
 
-    if (task === "summarize") {
-      instruction = "Give a short and clear summary.";
-    } else if (task === "explain") {
-      instruction = "Explain like teaching a school student.";
-    } else if (task === "keypoints") {
-      instruction = "Give bullet points only.";
-    }
+    const langRule = lang==="kannada"
+      ? "Respond ONLY in simple Kannada."
+      : "Respond ONLY in English.";
 
-    const languageInstruction =
-      lang === "kannada"
-        ? "Respond ONLY in Kannada language."
-        : "Respond ONLY in English.";
-
-    const prompt = `
+    const prompt=`
 You are an expert teacher.
 
 ${instruction}
+${langRule}
 
-${languageInstruction}
-
-If images are provided, extract the content carefully.
-
-Also:
-- Give clean formatting
-- Add simple examples if needed
-- If topic is unclear or irrelevant, say "Invalid input"
+Format:
+Title:
+Explanation:
+Examples:
+Conclusion:
 
 Text:
-${text || "No text provided"}
+${text || "Use image content"}
 `;
 
-    let parts = [{ text: prompt }];
+    let parts=[{text:prompt}];
 
-    if (images && images.length > 0) {
-      for (let img of images) {
+    if(images){
+      images.forEach(img=>{
         parts.push({
-          inline_data: {
-            mime_type: img.match(/^data:(.*?);/)[1],
-            data: img.split(",")[1]
+          inline_data:{
+            mime_type:img.match(/^data:(.*?);/)[1],
+            data:img.split(",")[1]
           }
         });
-      }
+      });
     }
 
-    const response = await fetch(
+    const response=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          contents: [{ parts }]
-        })
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({contents:[{parts}]})
       }
     );
 
-    const data = await response.json();
+    const data=await response.json();
 
     return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify(data)
+      statusCode:200,
+      headers:{"Access-Control-Allow-Origin":"*"},
+      body:JSON.stringify(data)
     };
 
-  } catch (error) {
+  }catch(err){
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
+      statusCode:500,
+      body:JSON.stringify({error:err.message})
     };
   }
 }
