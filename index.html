@@ -3,28 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Textbook Simplifier</title>
+<title>Sahayak AI</title>
 
 <style>
 body {
   font-family: system-ui;
-  background: #0f172a;
-  color: white;
-  text-align: center;
+  background: linear-gradient(to bottom, #0f172a, #020617);
+  color: #e2e8f0;
+  margin: 0;
   padding: 20px;
 }
 
-h1 { color: #38bdf8; }
-
 .container {
-  max-width: 700px;
+  max-width: 800px;
   margin: auto;
+}
+
+h1 {
+  text-align: center;
+  color: #38bdf8;
+}
+
+.card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 15px;
 }
 
 .upload-box {
   border: 2px dashed #38bdf8;
   padding: 20px;
   border-radius: 10px;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -33,18 +45,12 @@ h1 { color: #38bdf8; }
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 10px;
-  justify-content: center;
 }
 
 .preview img {
   width: 80px;
   height: 80px;
-  object-fit: cover;
   border-radius: 8px;
-}
-
-.preview div {
-  position: relative;
 }
 
 .remove {
@@ -53,38 +59,41 @@ h1 { color: #38bdf8; }
   right: -5px;
   background: red;
   border-radius: 50%;
-  cursor: pointer;
   padding: 2px 6px;
+  cursor: pointer;
 }
 
 textarea {
   width: 100%;
+  margin-top: 10px;
   padding: 10px;
   border-radius: 8px;
-  margin-top: 15px;
 }
 
 button {
   margin-top: 15px;
-  padding: 12px 20px;
-  background: #38bdf8;
+  padding: 12px;
+  width: 100%;
   border: none;
   border-radius: 8px;
+  background: #38bdf8;
+  color: black;
   font-weight: bold;
   cursor: pointer;
 }
 
 .tabs {
   display: flex;
-  margin-top: 20px;
-  justify-content: center;
   gap: 10px;
+  margin-top: 20px;
 }
 
 .tab {
-  padding: 8px 12px;
-  background: #1e293b;
+  flex: 1;
+  text-align: center;
+  padding: 10px;
   border-radius: 8px;
+  background: #1e293b;
   cursor: pointer;
 }
 
@@ -94,12 +103,35 @@ button {
 }
 
 .output {
-  margin-top: 15px;
-  background: #1e293b;
+  margin-top: 10px;
+  background: #020617;
   padding: 15px;
   border-radius: 10px;
-  text-align: left;
+  min-height: 120px;
   white-space: pre-wrap;
+}
+
+/* Loader animation */
+.loader {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.loader div {
+  width: 10px;
+  height: 10px;
+  background: #38bdf8;
+  border-radius: 50%;
+  animation: bounce 0.6s infinite alternate;
+}
+
+.loader div:nth-child(2) { animation-delay: 0.2s; }
+.loader div:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  to { transform: translateY(-8px); }
 }
 </style>
 </head>
@@ -108,42 +140,39 @@ button {
 
 <div class="container">
 
-<h1>📘 Textbook Simplifier</h1>
+<h1>📘 Sahayak AI</h1>
 
-<div class="upload-box" onclick="document.getElementById('fileInput').click()">
-  📤 Upload Photos
+<div class="card">
+  <div class="upload-box" onclick="fileInput.click()">
+    Upload textbook images
+  </div>
+
+  <input type="file" id="fileInput" hidden multiple accept="image/*">
+
+  <div class="preview" id="preview"></div>
+
+  <textarea id="doubt" placeholder="Ask your doubt..."></textarea>
+
+  <label>
+    <input type="radio" name="lang" value="kannada" checked> Kannada
+  </label>
+  <label>
+    <input type="radio" name="lang" value="english"> English
+  </label>
+
+  <button onclick="simplify()">✨ Simplify</button>
 </div>
-
-<input type="file" id="fileInput" multiple accept="image/*" hidden>
-
-<div class="preview" id="preview"></div>
-
-<textarea id="doubt" placeholder="Ask your doubt (optional)..."></textarea>
-
-<br>
-
-<label>
-  <input type="radio" name="lang" value="kannada" checked> Kannada
-</label>
-<label>
-  <input type="radio" name="lang" value="english"> English
-</label>
-
-<br>
-
-<button onclick="simplify()">✨ Simplify</button>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('summary')">Summary</div>
+  <div class="tab active" onclick="showTab('summarize')">Summary</div>
   <div class="tab" onclick="showTab('explain')">Explain</div>
-  <div class="tab" onclick="showTab('points')">Key Points</div>
+  <div class="tab" onclick="showTab('keypoints')">Key Points</div>
 </div>
 
-<div class="output" id="output">Result will appear here...</div>
+<div class="output" id="output"></div>
 
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
