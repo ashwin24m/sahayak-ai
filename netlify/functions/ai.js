@@ -22,7 +22,7 @@ ${text || ""}
 `;
 
   const response = await fetch(
-    "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=AIzaSyBInwkp53OzxzFJjnbwYGTQWlh6bMDik5c",
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBInwkp53OzxzFJjnbwYGTQWlh6bMDik5c",
     {
       method: "POST",
       headers: {
