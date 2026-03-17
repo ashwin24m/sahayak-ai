@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sahayak AI</title>
+</head>
+
+<body>
+
+<h1>Sahayak AI – Document Assistant</h1>
+
+<textarea id="textInput" rows="6" cols="60"
+  placeholder="Paste your document here..."></textarea><br><br>
+
+<input type="file" id="fileInput" accept="image/*"><br><br>
+
+<button onclick="sendTask('summarize')">Summarize</button>
+<button onclick="sendTask('explain')">Explain</button>
+<button onclick="sendTask('keypoints')">Key Points</button>
+
+<h2>Output:</h2>
+<pre id="output"></pre>
+
+<script src="script.js"></script>
+
+</body>
+</html>
