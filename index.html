@@ -1,95 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Textbook Simplifier</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Textbook Simplifier</title>
 
-  <style>
-    body {
-      font-family: system-ui;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
+<style>
+body {
+  font-family: system-ui;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
 
-    h1 {
-      color: #38bdf8;
-    }
+h1 { color: #38bdf8; }
 
-    textarea {
-      width: 90%;
-      max-width: 600px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-    }
+.container {
+  max-width: 700px;
+  margin: auto;
+}
 
-    input {
-      margin: 10px;
-    }
+.upload-box {
+  border: 2px dashed #38bdf8;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-    button {
-      margin: 5px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      background: #38bdf8;
-      color: black;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.preview {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  justify-content: center;
+}
 
-    button:hover {
-      background: #0ea5e9;
-    }
+.preview img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 
-    #output {
-      margin-top: 20px;
-      padding: 15px;
-      background: #1e293b;
-      border-radius: 10px;
-      text-align: left;
-      white-space: pre-wrap;
-    }
+.preview div {
+  position: relative;
+}
 
-    .lang {
-      margin-top: 10px;
-    }
-  </style>
+.remove {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 12px 20px;
+  background: #38bdf8;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tabs {
+  display: flex;
+  margin-top: 20px;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tab {
+  padding: 8px 12px;
+  background: #1e293b;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.active {
+  background: #38bdf8;
+  color: black;
+}
+
+.output {
+  margin-top: 15px;
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: left;
+  white-space: pre-wrap;
+}
+</style>
 </head>
 
 <body>
 
+<div class="container">
+
 <h1>📘 Textbook Simplifier</h1>
-<p>Understand any lesson in seconds (Kannada / English)</p>
 
-<textarea id="textInput" rows="5"
-  placeholder="Paste text (optional)..."></textarea><br>
-
-<input type="file" id="fileInput" accept="image/*" multiple><br>
-
-<div class="lang">
-  <label>
-    <input type="radio" name="lang" value="kannada" checked>
-    Kannada (Default)
-  </label>
-  <label>
-    <input type="radio" name="lang" value="english">
-    English
-  </label>
+<div class="upload-box" onclick="document.getElementById('fileInput').click()">
+  📤 Upload Photos
 </div>
+
+<input type="file" id="fileInput" multiple accept="image/*" hidden>
+
+<div class="preview" id="preview"></div>
+
+<textarea id="doubt" placeholder="Ask your doubt (optional)..."></textarea>
 
 <br>
 
-<button onclick="sendTask('summarize')">Summarize</button>
-<button onclick="sendTask('explain')">Explain Simply</button>
-<button onclick="sendTask('keypoints')">Key Points</button>
+<label>
+  <input type="radio" name="lang" value="kannada" checked> Kannada
+</label>
+<label>
+  <input type="radio" name="lang" value="english"> English
+</label>
 
-<div id="output">Result will appear here...</div>
+<br>
 
-<script src="script.js" defer></script>
+<button onclick="simplify()">✨ Simplify</button>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('summary')">Summary</div>
+  <div class="tab" onclick="showTab('explain')">Explain</div>
+  <div class="tab" onclick="showTab('points')">Key Points</div>
+</div>
+
+<div class="output" id="output">Result will appear here...</div>
+
+</div>
+
+<script src="script.js"></script>
 
 </body>
 </html>
