@@ -1,39 +1,52 @@
 export async function handler(event) {
   try {
     const body = JSON.parse(event.body);
-    const { task, text, image } = body;
+    const { task, text, images, lang } = body;
 
     let instruction = "";
 
     if (task === "summarize") {
-      instruction = "Summarize clearly.";
+      instruction = "Give a short and clear summary.";
     } else if (task === "explain") {
-      instruction = "Explain in simple terms.";
+      instruction = "Explain like teaching a school student.";
     } else if (task === "keypoints") {
-      instruction = "Give bullet points.";
+      instruction = "Give bullet points only.";
     }
 
+    const languageInstruction =
+      lang === "kannada"
+        ? "Respond ONLY in Kannada language."
+        : "Respond ONLY in English.";
+
     const prompt = `
-You are a helpful document assistant.
+You are an expert teacher.
 
 ${instruction}
 
-If an image is provided, extract and understand it.
+${languageInstruction}
 
-Document/Text:
+If images are provided, extract the content carefully.
+
+Also:
+- Give clean formatting
+- Add simple examples if needed
+- If topic is unclear or irrelevant, say "Invalid input"
+
+Text:
 ${text || "No text provided"}
 `;
 
-    // Build parts safely
     let parts = [{ text: prompt }];
 
-    if (image) {
-      parts.push({
-        inline_data: {
-          mime_type: image.match(/^data:(.*?);/)[1],
-          data: image.split(",")[1]
-        }
-      });
+    if (images && images.length > 0) {
+      for (let img of images) {
+        parts.push({
+          inline_data: {
+            mime_type: img.match(/^data:(.*?);/)[1],
+            data: img.split(",")[1]
+          }
+        });
+      }
     }
 
     const response = await fetch(

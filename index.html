@@ -3,26 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sahayak AI</title>
+  <title>Textbook Simplifier</title>
+
+  <style>
+    body {
+      font-family: system-ui;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #38bdf8;
+    }
+
+    textarea {
+      width: 90%;
+      max-width: 600px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    input {
+      margin: 10px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 15px;
+      background: #1e293b;
+      border-radius: 10px;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+
+    .lang {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>Sahayak AI – Document Assistant</h1>
+<h1>📘 Textbook Simplifier</h1>
+<p>Understand any lesson in seconds (Kannada / English)</p>
 
-<textarea id="textInput" rows="6" cols="60"
-  placeholder="Paste your document here..."></textarea><br><br>
+<textarea id="textInput" rows="5"
+  placeholder="Paste text (optional)..."></textarea><br>
 
-<input type="file" id="fileInput" accept="image/*"><br><br>
+<input type="file" id="fileInput" accept="image/*" multiple><br>
+
+<div class="lang">
+  <label>
+    <input type="radio" name="lang" value="kannada" checked>
+    Kannada (Default)
+  </label>
+  <label>
+    <input type="radio" name="lang" value="english">
+    English
+  </label>
+</div>
+
+<br>
 
 <button onclick="sendTask('summarize')">Summarize</button>
-<button onclick="sendTask('explain')">Explain</button>
+<button onclick="sendTask('explain')">Explain Simply</button>
 <button onclick="sendTask('keypoints')">Key Points</button>
 
-<h2>Output:</h2>
-<pre id="output"></pre>
+<div id="output">Result will appear here...</div>
 
-<script src="script.js"></script>
+<script src="script.js" defer></script>
 
 </body>
 </html>
