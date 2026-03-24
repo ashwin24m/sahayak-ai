@@ -3,26 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arivu</title>
+
+<title>Arivu AI</title>
 
 <link rel="manifest" href="manifest.json">
+
 <style>
 body {
   font-family: 'Segoe UI', system-ui;
-  background: #f8fafc;
-  color: #1e293b;
+  background: linear-gradient(135deg,#eef2ff,#f8fafc);
   margin: 0;
+  color: #1e293b;
 }
 
+/* Container */
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: auto;
   padding: 20px;
 }
 
+/* Header */
 h1 {
   text-align: center;
   color: #2563eb;
+  margin-bottom: 5px;
 }
 
 .tagline {
@@ -31,32 +36,50 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* Card */
 .card {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
 }
 
+/* Inputs */
+select, textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  margin-top: 10px;
+}
+
+textarea {
+  min-height: 80px;
+}
+
+/* Upload */
 .upload-box {
   border: 2px dashed #93c5fd;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   text-align: center;
   cursor: pointer;
   background: #eff6ff;
   color: #2563eb;
+  transition: 0.2s;
 }
 
+.upload-box:hover {
+  background: #dbeafe;
+}
+
+/* Preview */
 .preview {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 10px;
-}
-
-.preview div {
-  position: relative;
 }
 
 .preview img {
@@ -66,51 +89,50 @@ h1 {
   object-fit: cover;
 }
 
-.remove {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: red;
-  color: white;
-  border-radius: 50%;
-  padding: 2px 6px;
-  cursor: pointer;
-}
-
-textarea {
-  width: 100%;
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #cbd5f5;
-}
-
+/* Buttons */
 button {
-  margin-top: 15px;
   width: 100%;
   padding: 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #2563eb;
   color: white;
   font-weight: bold;
+  margin-top: 15px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-.tabs {
+button:hover {
+  background: #1d4ed8;
+}
+
+/* Toggle Row */
+.row {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
-  <div class="tab" onclick="showTab('worksheet')">📝 Worksheet</div>
+  margin-top: 10px;
+}
+
+.row select, .row button {
+  flex: 1;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .tab {
   flex: 1;
-  text-align: center;
   padding: 10px;
-  border-radius: 8px;
+  text-align: center;
+  border-radius: 10px;
   background: #e2e8f0;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .active {
@@ -118,13 +140,15 @@ button {
   color: white;
 }
 
+/* Output */
 .output {
   margin-top: 15px;
-  background: white;
   padding: 15px;
-  border-radius: 10px;
-  min-height: 120px;
+  border-radius: 12px;
+  background: #ffffff;
+  min-height: 150px;
   line-height: 1.6;
+  box-shadow: inset 0 0 0 1px #e2e8f0;
 }
 
 /* Loader */
@@ -148,6 +172,25 @@ button {
 @keyframes bounce {
   to { transform: translateY(-6px); }
 }
+
+/* Language Switch */
+.lang-switch {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.lang-switch button {
+  flex: 1;
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.lang-switch button.active {
+  background: #2563eb;
+  color: white;
+}
+
 </style>
 </head>
 
@@ -155,46 +198,96 @@ button {
 
 <div class="container">
 
-<h1>Arivu</h1>
-<p class="tagline">Understand any lesson, instantly</p>
+<h1>Arivu AI</h1>
+<p class="tagline">Understand lessons instantly — in Kannada & English</p>
 
+<!-- INPUT CARD -->
 <div class="card">
 
+<div class="row">
+  <select id="mode">
+    <option value="student">🎓 Student</option>
+    <option value="teacher">👩‍🏫 Teacher</option>
+  </select>
+
+  <select id="classLevel">
+    <option value="5">Class 5</option>
+    <option value="6">Class 6</option>
+    <option value="7">Class 7</option>
+    <option value="8">Class 8</option>
+    <option value="9">Class 9</option>
+    <option value="10">Class 10</option>
+    <option value="11">Class 11</option>
+    <option value="12">Class 12</option>
+  </select>
+</div>
+
+<select id="syllabus">
+  <option>Karnataka State</option>
+  <option>CBSE</option>
+  <option>ICSE</option>
+</select>
+
+<label style="font-size:14px;">
+  <input type="checkbox" id="advanced"> Advanced (PU / College Level)
+</label>
+
 <div class="upload-box" onclick="fileInput.click()">
-  Upload textbook images
+  📷 Upload textbook image
 </div>
 
 <input type="file" id="fileInput" hidden multiple accept="image/*">
 
 <div class="preview" id="preview"></div>
 
-<p style="font-size:13px;color:#64748b;">
-Upload textbook pages or notes
-</p>
+<textarea id="doubt" placeholder="Ask your doubt (optional)..."></textarea>
 
-<textarea id="doubt" placeholder="Ask your doubt..."></textarea>
+<button onclick="simplify()">✨ Explain Now</button>
 
-<label>
-  <input type="radio" name="lang" value="kannada" checked> Kannada
-</label>
-<label>
-  <input type="radio" name="lang" value="english"> English
-</label>
+</div>
 
-<button onclick="simplify()">✨ Simplify</button>
+<!-- OUTPUT CARD -->
+<div class="card">
 
+<div class="lang-switch">
+  <button id="knBtn" class="active" onclick="switchLang('kannada')">Kannada</button>
+  <button id="enBtn" onclick="switchLang('english')">English</button>
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('summarize')">📖 Summary</div>
-  <div class="tab" onclick="showTab('explain')">🧠 Explanation</div>
-  <div class="tab" onclick="showTab('keypoints')">📌 Key Points</div>
+  <div class="tab active" onclick="showTab('summary')">Summary</div>
+  <div class="tab" onclick="showTab('explanation')">Explanation</div>
+  <div class="tab" onclick="showTab('chapters')">Related</div>
+  <div class="tab" onclick="showTab('points')">Key Points</div>
+  <div class="tab" onclick="showTab('teacher')">Teacher</div>
 </div>
 
-<div class="output" id="output">Start by uploading a lesson.</div>
+<div class="output" id="output">
+Upload a textbook page to begin.
+</div>
+
+</div>
 
 </div>
 
 <script src="script.js"></script>
+
+<script>
+function switchLang(lang){
+  currentLang = lang;
+
+  document.getElementById("knBtn").classList.remove("active");
+  document.getElementById("enBtn").classList.remove("active");
+
+  if(lang==="kannada"){
+    document.getElementById("knBtn").classList.add("active");
+  } else {
+    document.getElementById("enBtn").classList.add("active");
+  }
+
+  showTab("summary");
+}
+</script>
+
 </body>
 </html>
