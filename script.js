@@ -1,9 +1,5 @@
 let images = [];
-let results = {
-  summarize: null,
-  explain: null,
-  keypoints: null
-};
+let result = null;
 
 const preview = document.getElementById("preview");
 const fileInput = document.getElementById("fileInput");
@@ -11,8 +7,8 @@ const fileInput = document.getElementById("fileInput");
 fileInput.addEventListener("change", async (e) => {
   for (let file of e.target.files) {
     const reader = new FileReader();
-    const base64 = await new Promise(res=>{
-      reader.onload = ()=>res(reader.result);
+    const base64 = await new Promise(res => {
+      reader.onload = () => res(reader.result);
       reader.readAsDataURL(file);
     });
     images.push(base64);
@@ -22,68 +18,73 @@ fileInput.addEventListener("change", async (e) => {
 
 function renderPreview() {
   preview.innerHTML = "";
-  images.forEach((img,i)=>{
-    const div=document.createElement("div");
-    div.innerHTML=`<img src="${img}">
+  images.forEach((img, i) => {
+    const div = document.createElement("div");
+    div.innerHTML = `<img src="${img}">
     <span class="remove" onclick="removeImage(${i})">×</span>`;
     preview.appendChild(div);
   });
 }
 
-function removeImage(i){
-  images.splice(i,1);
+function removeImage(i) {
+  images.splice(i, 1);
   renderPreview();
 }
 
-async function simplify(){
-  const doubt=document.getElementById("doubt").value;
-  const lang=document.querySelector('input[name="lang"]:checked').value;
-  const output=document.getElementById("output");
+async function simplify() {
+  const doubt = document.getElementById("doubt").value;
+  const lang = document.querySelector('input[name="lang"]:checked').value;
+  const output = document.getElementById("output");
 
-  if(images.length===0){
-    output.textContent="Upload at least one image.";
+  if (images.length === 0) {
+    output.textContent = "Upload at least one image.";
     return;
   }
 
-  results={summarize:"loading",explain:"loading",keypoints:"loading"};
-  showTab("summarize");
+  output.innerHTML = `<div class="loader"><div></div><div></div><div></div></div>`;
 
-  ["summarize","explain","keypoints"].forEach(t=>{
-    runTask(t,doubt,lang);
-  });
-}
-
-async function runTask(task,doubt,lang){
-  const res=await fetch("/.netlify/functions/ai",{
-    method:"POST",
-    body:JSON.stringify({task,text:doubt,images,lang})
+  const res = await fetch("/.netlify/functions/ai", {
+    method: "POST",
+    body: JSON.stringify({ text: doubt, images, lang })
   });
 
-  const data=await res.json();
-  results[task]=data.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
-  showTab(task);
+  const data = await res.json();
+  result = data;
+
+  showTab("summary");
 }
 
-function format(text){
-  return text.replace(/\n/g,"<br>").replace(/\*\*(.*?)\*\*/g,"<b>$1</b>");
-}
+function showTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
 
-function showTab(tab){
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  const output=document.getElementById("output");
+  const output = document.getElementById("output");
 
-  if(tab==="summarize") document.querySelectorAll(".tab")[0].classList.add("active");
-  if(tab==="explain") document.querySelectorAll(".tab")[1].classList.add("active");
-  if(tab==="keypoints") document.querySelectorAll(".tab")[2].classList.add("active");
+  if (tab === "summary") {
+    document.querySelectorAll(".tab")[0].classList.add("active");
+    output.innerHTML = format(result.summary);
+  }
 
-  if(results[tab]==="loading"){
-    output.innerHTML=`<div class="loader"><div></div><div></div><div></div></div>`;
-  } else {
-    output.innerHTML=format(results[tab]);
+  if (tab === "explain") {
+    document.querySelectorAll(".tab")[1].classList.add("active");
+    output.innerHTML = format(result.explanation);
+  }
+
+  if (tab === "keypoints") {
+    document.querySelectorAll(".tab")[2].classList.add("active");
+    output.innerHTML = result.keypoints.map(p => `• ${p}`).join("<br>");
+  }
+
+  if (tab === "worksheet") {
+    output.innerHTML = result.worksheet
+      .map(q => `<b>Q:</b> ${q.question}<br><b>A:</b> ${q.answer}<br><br>`)
+      .join("");
   }
 }
 
-/* PWA */
-if("serviceWorker" in navigator){
+function format(text) {
+  return text?.replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+}
+
+if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");
 }
