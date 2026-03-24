@@ -1,63 +1,60 @@
 const cache = new Map();
-const usage = new Map();
 
 export async function handler(event) {
   try {
-    const ip = event.headers["x-forwarded-for"] || "unknown";
-
-    // ===== Usage Limit =====
-    const limit = 20; // requests per hour
-    const now = Date.now();
-    const user = usage.get(ip) || { count: 0, time: now };
-
-    if (now - user.time > 3600000) {
-      user.count = 0;
-      user.time = now;
-    }
-
-    user.count++;
-    usage.set(ip, user);
-
-    if (user.count > limit) {
-      return {
-        statusCode: 429,
-        body: JSON.stringify({ error: "Limit exceeded. Try later." })
-      };
-    }
-
-    const { text, images, lang } = JSON.parse(event.body);
-
-    const langRule =
-      lang === "kannada"
-        ? "Respond ONLY in simple Kannada."
-        : "Respond ONLY in English.";
+    const { text, images, lang, classLevel, syllabus, mode } = JSON.parse(event.body);
 
     const prompt = `
-You are an expert teacher.
+You are Arivu AI, an expert teacher.
 
-${langRule}
+STRICT RULES:
+- If images are unclear or irrelevant, return:
+{ "error": "Invalid or unclear image. Please upload a proper textbook page." }
 
-Return STRICT JSON in this format:
+- Understand syllabus context:
+Syllabus: ${syllabus}
+Class: ${classLevel}
+
+- Mode: ${mode}
+
+- Generate BOTH Kannada and English responses.
+
+Return STRICT JSON:
+
 {
-  "summary": "",
-  "explanation": "",
-  "keypoints": ["", "", ""],
-  "worksheet": [
-    {
-      "question": "",
-      "answer": ""
+  "valid": true,
+  "student": {
+    "kannada": {
+      "summary": "",
+      "explanation": "",
+      "related_chapters": [],
+      "keypoints": []
+    },
+    "english": {
+      "summary": "",
+      "explanation": "",
+      "related_chapters": [],
+      "keypoints": []
     }
-  ]
+  },
+  "teacher": {
+    "lesson_plan": "",
+    "teaching_steps": [],
+    "real_life_examples": []
+  }
 }
 
-Explain clearly for students.
+Keep explanations:
+- short
+- precise
+- student-friendly
+- syllabus-aligned
 
 Text:
-${text || "Use image content"}
+${text || "Use image"}
 `;
 
-    // ===== Cache Key =====
-    const key = JSON.stringify({ text, images, lang });
+    const key = JSON.stringify({ text, images, classLevel, syllabus });
 
     if (cache.has(key)) {
       return {
@@ -91,15 +88,13 @@ ${text || "Use image content"}
 
     const data = await response.json();
 
-    const raw =
-      data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+    let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
 
     let parsed;
-
     try {
       parsed = JSON.parse(raw);
     } catch {
-      parsed = { summary: raw, explanation: raw, keypoints: [], worksheet: [] };
+      parsed = { error: "AI parsing failed" };
     }
 
     cache.set(key, parsed);
@@ -109,6 +104,7 @@ ${text || "Use image content"}
       headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify(parsed)
     };
+
   } catch (err) {
     return {
       statusCode: 500,
