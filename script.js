@@ -1,90 +1,75 @@
 let images = [];
 let result = null;
-
-const preview = document.getElementById("preview");
-const fileInput = document.getElementById("fileInput");
-
-fileInput.addEventListener("change", async (e) => {
-  for (let file of e.target.files) {
-    const reader = new FileReader();
-    const base64 = await new Promise(res => {
-      reader.onload = () => res(reader.result);
-      reader.readAsDataURL(file);
-    });
-    images.push(base64);
-  }
-  renderPreview();
-});
-
-function renderPreview() {
-  preview.innerHTML = "";
-  images.forEach((img, i) => {
-    const div = document.createElement("div");
-    div.innerHTML = `<img src="${img}">
-    <span class="remove" onclick="removeImage(${i})">×</span>`;
-    preview.appendChild(div);
-  });
-}
-
-function removeImage(i) {
-  images.splice(i, 1);
-  renderPreview();
-}
+let currentLang = "kannada";
 
 async function simplify() {
-  const doubt = document.getElementById("doubt").value;
-  const lang = document.querySelector('input[name="lang"]:checked').value;
+  const text = document.getElementById("doubt").value;
+  const classLevel = document.getElementById("classLevel").value;
+  const syllabus = document.getElementById("syllabus").value;
+  const mode = document.getElementById("mode").value;
+
   const output = document.getElementById("output");
 
   if (images.length === 0) {
-    output.textContent = "Upload at least one image.";
+    output.textContent = "Upload a valid textbook image.";
     return;
   }
 
-  output.innerHTML = `<div class="loader"><div></div><div></div><div></div></div>`;
+  output.innerHTML = "Loading...";
 
   const res = await fetch("/.netlify/functions/ai", {
     method: "POST",
-    body: JSON.stringify({ text: doubt, images, lang })
+    body: JSON.stringify({ text, images, classLevel, syllabus, mode })
   });
 
   const data = await res.json();
+
+  if (data.error) {
+    output.textContent = data.error;
+    return;
+  }
+
   result = data;
 
   showTab("summary");
 }
 
-function showTab(tab) {
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+function getStudent() {
+  return result.student[currentLang];
+}
 
+function showTab(tab) {
   const output = document.getElementById("output");
 
+  if (!result) return;
+
   if (tab === "summary") {
-    document.querySelectorAll(".tab")[0].classList.add("active");
-    output.innerHTML = format(result.summary);
+    output.innerHTML = getStudent().summary;
   }
 
-  if (tab === "explain") {
-    document.querySelectorAll(".tab")[1].classList.add("active");
-    output.innerHTML = format(result.explanation);
+  if (tab === "explanation") {
+    output.innerHTML = getStudent().explanation;
   }
 
-  if (tab === "keypoints") {
-    document.querySelectorAll(".tab")[2].classList.add("active");
-    output.innerHTML = result.keypoints.map(p => `• ${p}`).join("<br>");
+  if (tab === "chapters") {
+    output.innerHTML = getStudent().related_chapters.map(c => "• " + c).join("<br>");
   }
 
-  if (tab === "worksheet") {
-    output.innerHTML = result.worksheet
-      .map(q => `<b>Q:</b> ${q.question}<br><b>A:</b> ${q.answer}<br><br>`)
-      .join("");
+  if (tab === "points") {
+    output.innerHTML = getStudent().keypoints.map(p => "• " + p).join("<br>");
+  }
+
+  if (tab === "teacher") {
+    const t = result.teacher;
+    output.innerHTML = `
+      <b>Lesson Plan:</b><br>${t.lesson_plan}<br><br>
+      <b>Steps:</b><br>${t.teaching_steps.join("<br>")}<br><br>
+      <b>Real-life:</b><br>${t.real_life_examples.join("<br>")}
+    `;
   }
 }
 
-function format(text) {
-  return text?.replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
-}
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js");
+function switchLang(lang) {
+  currentLang = lang;
+  showTab("summary");
 }
